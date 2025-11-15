@@ -14,23 +14,28 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v3
 
-      # 2. Create zip folder if it doesn't exist
+      # 2. Create zip folder
       - name: Create zip folder
         run: mkdir -p zip
 
-      # 3. Zip each top-level folder separately, excluding the zip folder itself
+      # 3. Zip each top-level folder individually
       - name: Zip top-level folders
         run: |
           for dir in */ ; do
             folder_name=$(basename "$dir")
             if [ "$folder_name" != "zip" ]; then
-              zip -r "zip/${folder_name}.zip" "$folder_name" -x "zip/*"
+              # Go into the folder and zip its contents only
+              (cd "$folder_name" && zip -r "../zip/${folder_name}.zip" .)
             fi
           done
 
-      # 4. Upload zips as artifacts (downloadable)
+      # 4. Upload each zip as a separate artifact
       - name: Upload ZIPs
         uses: actions/upload-artifact@v4
         with:
-          name: zipped-folders
-          path: zip/
+          name: java
+          path: zip/java.zip
+      - uses: actions/upload-artifact@v4
+        with:
+          name: bedrock
+          path: zip/bedrock.zip
