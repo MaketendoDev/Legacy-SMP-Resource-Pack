@@ -19,7 +19,6 @@ jobs:
         run: mkdir -p zip
 
       # 3. Zip each top-level folder, excluding the zip folder itself
-      # 3. Zip each top-level folder, contents at root of zip
       - name: Zip top-level folders
         run: |
           mkdir -p zip
