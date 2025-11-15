@@ -9,7 +9,47 @@ jobs:
     outputs:
       folders: ${{ steps.get-folders.outputs.list }}
 
+    steps:name: Zip Folders
+
+on:
+  workflow_dispatch:
+
+jobs:
+  zip:
+    runs-on: ubuntu-latest
+
     steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - id: list
+        run: |
+          folders=$(ls -d */ | sed 's:/::' | jq -R . | jq -s .)
+          echo "folders=$folders" >> "$GITHUB_OUTPUT"
+
+      - name: Zip and upload
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const folders = JSON.parse(process.env.FOLDERS);
+
+            const { execSync } = require("child_process");
+
+            for (const folder of folders) {
+              console.log("Zipping: " + folder);
+              execSync(`cd ${folder} && zip -r ../${folder}.zip .`);
+
+              console.log("Uploading: " + folder);
+              await github.rest.actions.uploadArtifact({
+                name: folder,
+                path: `${folder}.zip`,
+                repo: context.repo.repo,
+                owner: context.repo.owner,
+              });
+            }
+          env:
+            FOLDERS: ${{ steps.list.outputs.folders }}
+
       - uses: actions/checkout@v4
 
       - id: get-folders
