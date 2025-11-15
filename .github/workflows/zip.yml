@@ -10,28 +10,23 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      # 1. Checkout repo
       - name: Checkout repository
         uses: actions/checkout@v3
 
-      # 2. Zip files
       - name: Zip repository
-        run: |
-          zip -r project.zip . -x ".git/*"
+        run: zip -r project.zip . -x ".git/*"
 
-      # 3. Create GitHub release
       - name: Create Release
         id: create_release
         uses: actions/create-release@v1
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.SECRET }}
         with:
-          tag_name: release-${{ github.sha }}        # unique per commit
+          tag_name: release-${{ github.sha }}
           release_name: Release ${{ github.sha }}
           draft: false
           prerelease: false
 
-      # 4. Upload zip to release
       - name: Upload Release Asset
         uses: actions/upload-release-asset@v1
         env:
