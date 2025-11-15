@@ -25,6 +25,7 @@ jobs:
           for dir in */ ; do
             folder_name=$(basename "$dir")
             if [ "$folder_name" != "zip" ]; then
+              # go into the folder and zip all contents into ../zip folder
               (cd "$folder_name" && zip -r "../zip/${folder_name}.zip" .)
             fi
           done
