@@ -1,27 +1,44 @@
-name: Build and Publish Zips
+name: Release Zips
 
 on:
   push:
-    branches: ["main"]
-  workflow_dispatch:
+    branches: ["main"]   # run when committing to main
+  workflow_dispatch:      # allow manual run
 
 jobs:
-  build:
+  release:
     runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@v4
+      - name: Checkout
+        uses: actions/checkout@v4
 
       - name: Zip folders
         run: |
-          mkdir public
+          mkdir release-files
           for dir in */ ; do
             folder="${dir%/}"
-            (cd "$folder" && zip -r "../public/$folder.zip" .)
+            echo "Zipping $folder"
+            (cd "$folder" && zip -r "../release-files/$folder.zip" .)
           done
 
-      - name: Deploy to GitHub Pages
-        uses: peaceiris/actions-gh-pages@v3
+      - name: Create Release
+        id: create_release
+        uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          github_token: ${{ secrets.TOKEN }}
-          publish_dir: public
+          tag_name: "build-${{ github.sha }}"
+          release_name: "Build ${{ github.sha }}"
+          draft: false
+          prerelease: false
+
+      - name: Upload zip files to Release
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: "./release-files"
+          asset_name: "folder-zips"
+          asset_content_type: "application/zip"
