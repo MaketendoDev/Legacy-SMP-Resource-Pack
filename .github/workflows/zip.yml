@@ -15,18 +15,26 @@ jobs:
 
       - name: Zip each top-level folder
         run: |
+          mkdir -p zips
           for d in */ ; do
-            folder="${d%/}"
+            folder="${d%/}"               # remove trailing slash
             echo "Zipping contents of: $folder"
 
-            mkdir -p zips
-
-            # Zip ONLY the contents, not the folder itself
+            # zip ONLY the contents of the folder
             (cd "$folder" && zip -r "../zips/$folder.zip" .)
           done
 
-      - name: Upload zipped artifacts
+      - name: Upload each zip separately
+        run: |
+          for f in zips/*.zip; do
+            name=$(basename "$f" .zip)
+            echo "Uploading artifact: $name"
+            gh workflow run # ignore
+          done
+
+        shell: bash
+
+      - name: Upload artifacts
         uses: actions/upload-artifact@v4
         with:
-          name: zipped-folders
           path: zips/*.zip
