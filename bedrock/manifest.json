@@ -1,7 +1,7 @@
 {
   "format_version": 1,
   "header": {
-    "description": "Resources used in the Legacy SMP",
+    "description": "Resources used in the Legacy SMP for Bedrock.",
     "name": "java",
     "platform_locked": false,
     "uuid": "312d6921-63ca-4a1e-9fb4-06c440f51b8b",
@@ -13,7 +13,7 @@
   },
   "modules": [
     {
-      "description": "Resources used in the Legacy SMP",
+      "description": "Resources used in the Legacy SMP for Bedrock.",
       "type": "resources",
       "uuid": "25b6c136-6911-4cf3-9a8d-b34a4101e1fb",
       "version": [
