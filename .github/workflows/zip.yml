@@ -37,4 +37,4 @@ jobs:
           git commit -m "Add zipped folders [skip ci]" || echo "No changes to commit"
           git push
         env:
-          GITHUB_TOKEN: ${{ secrets.SECRET }}
+          GITHUB_TOKEN: ${{ secrets.TOKEN }}
