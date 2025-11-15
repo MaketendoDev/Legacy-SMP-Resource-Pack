@@ -1,50 +1,27 @@
-name: Zip Folders
+name: Build and Publish Zips
 
 on:
   push:
-    branches: ["**"]
+    branches: ["main"]
   workflow_dispatch:
 
 jobs:
-  detect-folders:
+  build:
     runs-on: ubuntu-latest
-    outputs:
-      folders: ${{ steps.list.outputs.folders }}
 
     steps:
       - uses: actions/checkout@v4
 
-      - id: list
+      - name: Zip folders
         run: |
-          # List folders (no trailing slash)
-          folders=$(ls -d */ 2>/dev/null | sed 's:/$::')
+          mkdir public
+          for dir in */ ; do
+            folder="${dir%/}"
+            (cd "$folder" && zip -r "../public/$folder.zip" .)
+          done
 
-          # Convert to JSON array
-          json=$(printf '%s\n' $folders | jq -R . | jq -s .)
-
-          # Write JSON array in ONE LINE to GITHUB_OUTPUT
-          echo "folders=$json" >> $GITHUB_OUTPUT
-
-          echo "Detected folders: $json"
-
-  zip:
-    needs: detect-folders
-    runs-on: ubuntu-latest
-
-    strategy:
-      matrix:
-        folder: ${{ fromJson(needs.detect-folders.outputs.folders) }}
-
-    steps:
-      - uses: actions/checkout@v4
-
-      - name: Zip folder contents
-        run: |
-          cd "${{ matrix.folder }}"
-          zip -r "../${{ matrix.folder }}.zip" .
-
-      - name: Upload artifact
-        uses: actions/upload-artifact@v4
+      - name: Deploy to GitHub Pages
+        uses: peaceiris/actions-gh-pages@v3
         with:
-          name: ${{ matrix.folder }}
-          path: ${{ matrix.folder }}.zip
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: public
