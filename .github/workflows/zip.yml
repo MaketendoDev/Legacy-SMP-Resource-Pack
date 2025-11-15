@@ -1,4 +1,4 @@
-name: Zip Folders (Save me)
+name: Zip Folders
 
 on:
   push:
@@ -6,42 +6,37 @@ on:
   workflow_dispatch:
 
 jobs:
-  zip:
+  detect-folders:
     runs-on: ubuntu-latest
+    outputs:
+      folders: ${{ steps.list.outputs.folders }}
 
     steps:
-      - name: Checkout
-        uses: actions/checkout@v4
+      - uses: actions/checkout@v4
 
-      - name: Zip folders
-        id: zipstep
+      - id: list
         run: |
-          mkdir output
-          folders=""
-          for dir in */ ; do
-            folder="${dir%/}"
-            echo "Zipping $folder"
-            (cd "$folder" && zip -r "../output/$folder.zip" .)
-            folders="$folders $folder"
-          done
-          echo "folders=$folders" >> $GITHUB_OUTPUT
+          folders=$(ls -d */ | sed 's#/##')
+          json=$(printf '%s\n' $folders | jq -R . | jq -s .)
+          echo "folders=$json" >> $GITHUB_OUTPUT
 
-      - name: Upload each zip separately
-        uses: actions/github-script@v7
+  zip:
+    needs: detect-folders
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        folder: ${{ fromJson(needs.detect-folders.outputs.folders) }}
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Zip folder contents
+        run: |
+          cd "${{ matrix.folder }}"
+          zip -r "../${{ matrix.folder }}.zip" .
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
         with:
-          script: |
-            const folders = process.env.FOLDERS.trim().split(/\s+/)
-            for (const folder of folders) {
-              const zipPath = `output/${folder}.zip`
-              console.log(`Uploading artifact: ${folder}`)
-
-              await github.rest.actions.uploadArtifact({
-                owner: context.repo.owner,
-                repo: context.repo.repo,
-                name: folder,
-                path: zipPath
-              })
-            }
-        env:
-          FOLDERS: "${{ steps.zipstep.outputs.folders }}"
-
+          name: ${{ matrix.folder }}
+          path: ${{ matrix.folder }}.zip
