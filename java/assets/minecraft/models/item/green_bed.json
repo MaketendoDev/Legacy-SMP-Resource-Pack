@@ -1,8 +1,6 @@
 {
-    "parent": "item/generated",
-    "textures": {
-        "layer0": "item/green_bed"
-    }
+  "parent": "minecraft:item/generated",
+  "textures": {
+    "layer0": "minecraft:item/green_bed"
+  }
 }
-
-
