@@ -1,26 +1,38 @@
 {
-  "format_version": 1,
-  "header": {
-    "description": "Resources used in the Legacy SMP for Bedrock.",
-    "name": "java",
-    "platform_locked": false,
-    "uuid": "312d6921-63ca-4a1e-9fb4-06c440f51b8b",
-    "version": [
-      0,
-      0,
-      1
+    "pack": {
+        "pack_format": 49,
+        "supported_formats": [
+            49,
+            999
+        ],
+        "description": "The Legacy SMP Server Resource Pack!"
+    },
+    "format_version": 2,
+    "header": {
+        "description": "The Legacy SMP Server Resource Pack!",
+        "name": "java",
+        "uuid": "77979e61-9c58-4074-9230-6284a48bcb47",
+        "version": [
+            1,
+            0,
+            0
+        ],
+        "min_engine_version": [
+            1,
+            18,
+            12
+        ]
+    },
+    "modules": [
+        {
+            "description": "The Legacy SMP Server Resource Pack!",
+            "type": "resources",
+            "uuid": "be5aadc6-2c68-4cbb-a03c-31d93ac41576",
+            "version": [
+                1,
+                0,
+                0
+            ]
+        }
     ]
-  },
-  "modules": [
-    {
-      "description": "Resources used in the Legacy SMP for Bedrock.",
-      "type": "resources",
-      "uuid": "25b6c136-6911-4cf3-9a8d-b34a4101e1fb",
-      "version": [
-        0,
-        0,
-        1
-      ]
-    }
-  ]
 }
