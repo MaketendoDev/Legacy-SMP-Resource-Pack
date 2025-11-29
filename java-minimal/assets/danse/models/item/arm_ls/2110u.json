@@ -1,0 +1,1 @@
+{"textures":{"p":"danse:item/model","particle":"#p"},"elements":[{"from":[9.333333333333332,7.333333333333333,4.0],"to":[11.999999999999998,8.0,6.0],"faces":{"up":{"uv":[0,0,16,16],"texture":"#p","tintindex":0}}}],"display":{"head":{"translation":[-0.9575,0.5,0.0],"scale":[0.3225,1.40625,0.46875]}}}
